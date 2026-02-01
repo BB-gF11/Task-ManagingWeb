@@ -10,14 +10,24 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-//@Service
-public class TaskServiceImpl  {
+@Service
+public class TaskServiceImpl implements TaskService {
+    private TaskRepository repo;
+    @Override
+    public void creatTask(TaskRequest request) {
+
+    }
+
+    @Override
+    public List<Task> getTasks(Long userId) {
+       return repo.findByUserId(userId);
+    }
 //    private TaskRepository repo;
 //
 //    @Override
 //    public void creatTask(TaskRequest request) {
 //
-//    }
+//
 //
 //    @Override
 //    public List<Task> getTask(Long userId) {

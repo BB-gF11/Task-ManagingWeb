@@ -8,5 +8,5 @@ import java.util.List;
 public interface TaskService {
     void creatTask(TaskRequest request);
 
-    List<Task> getTask(Long userId);
+    List<Task> getTasks(Long userId);
 }

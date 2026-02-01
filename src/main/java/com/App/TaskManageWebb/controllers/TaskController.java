@@ -19,6 +19,6 @@ public class TaskController {
 
     @GetMapping
     public List<Task> getTasks(Long userId){
-        return service.getTask(userId);
+        return service.getTasks(userId);
     }
 }
