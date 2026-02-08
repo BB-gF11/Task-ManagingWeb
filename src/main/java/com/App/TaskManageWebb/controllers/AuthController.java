@@ -1,5 +1,6 @@
 package com.App.TaskManageWebb.controllers;
 
+import com.App.TaskManageWebb.dto.JwtAuthResponse;
 import com.App.TaskManageWebb.dto.LoginRequest;
 import com.App.TaskManageWebb.dto.SignupRequest;
 import com.App.TaskManageWebb.response.ApiResponse;
@@ -25,8 +26,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest request){
-        ApiResponse response = authService.login(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginRequest request){
+        String token = authService.login(request);
+        JwtAuthResponse jwtAuthResponse = new JwtAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 }

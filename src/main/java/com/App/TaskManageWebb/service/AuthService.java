@@ -7,5 +7,5 @@ import com.App.TaskManageWebb.response.ApiResponse;
 public interface AuthService {
     public ApiResponse signup(SignupRequest req);
 
-    ApiResponse login(LoginRequest request);
+    String login(LoginRequest request);
 }

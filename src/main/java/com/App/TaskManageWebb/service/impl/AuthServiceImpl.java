@@ -1,14 +1,17 @@
 package com.App.TaskManageWebb.service.impl;
 
+import com.App.TaskManageWebb.config.JwtTokenProvider;
 import com.App.TaskManageWebb.dto.LoginRequest;
 import com.App.TaskManageWebb.dto.SignupRequest;
-import com.App.TaskManageWebb.exception.InvalidPasswordException;
-import com.App.TaskManageWebb.exception.UserNotFoundException;
 import com.App.TaskManageWebb.model.User;
 import com.App.TaskManageWebb.repository.UserRepository;
 import com.App.TaskManageWebb.response.ApiResponse;
 import com.App.TaskManageWebb.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +19,10 @@ import org.springframework.stereotype.Service;
 public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
     private BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @Override
@@ -34,15 +41,18 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponse login(LoginRequest request) {
+    public String login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail());
-        if(user == null){
-            throw new UserNotFoundException("user doesn't exist");
-        }
-        if(!encoder.matches(request.getPassword(), user.getPassword())){
-            throw new InvalidPasswordException("wrong password");
-        }
-        return new ApiResponse("welcome"+ user.getName());
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        String token = jwtTokenProvider.generateToken(authentication);
+        return token;
 
     }
 }
